@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesut Tekno - Stok Yönetim Sistemi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+        .sidebar-item:hover { background-color: #2d2d2d; }
+        .active-menu { background-color: #ffffff; color: #000000 !important; border-radius: 8px; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div id="loginPage" class="fixed inset-0 z-50 flex flex-col md:flex-row">
+        <div class="md:w-1/2 bg-black text-white flex flex-col justify-center p-12 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+            <div class="mb-8">
+                <i class="fa-solid fa-box-archive text-3xl"></i>
+                <span class="ml-2 font-bold text-xl uppercase tracking-widest">Mesut Tekno Market</span>
+            </div>
+            <h1 class="text-5xl font-bold mb-4">Stok kontrolü<br>tek tıkla.</h1>
+            <p class="text-gray-400 text-lg">Hızlı arama, stok takibi ve raporlama.</p>
+        </div>
+        <div class="md:w-1/2 bg-white flex flex-col justify-center p-12">
+            <div class="max-w-sm mx-auto w-full">
+                <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Yönetici Girişi</p>
+                <h2 class="text-3xl font-bold mb-8">Hoş geldin.</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                        <input type="text" id="email" class="w-full border-gray-300 border p-3 rounded-lg mt-1 focus:ring-black focus:border-black" placeholder="admin">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                        <input type="password" id="password" class="w-full border-gray-300 border p-3 rounded-lg mt-1 focus:ring-black focus:border-black" placeholder="••••••••">
+                    </div>
+                    <button onclick="handleLogin()" class="w-full bg-black text-white p-4 rounded-lg font-bold hover:bg-gray-800 transition">Giriş Yap</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainDashboard" class="hidden flex min-h-screen">
+        <aside class="w-64 bg-black text-gray-400 p-6 flex flex-col">
+            <div class="text-white flex items-center mb-10">
+                <i class="fa-solid fa-cube text-2xl mr-2"></i>
+                <div>
+                    <p class="font-bold text-sm leading-none">Mesut Tekno</p>
+                    <p class="text-[10px] text-gray-500">STOK SİSTEMİ</p>
+                </div>
+            </div>
+            <nav class="space-y-2 flex-1">
+                <a href="#" onclick="showSection('products')" class="sidebar-item flex items-center p-3 text-sm transition active-menu"><i class="fa-solid fa-list w-6"></i> Ürünler</a>
+                <a href="#" onclick="showSection('newProduct')" class="sidebar-item flex items-center p-3 text-sm transition"><i class="fa-solid fa-circle-plus w-6"></i> Yeni Ürün</a>
+                <a href="#" onclick="showSection('scan')" class="sidebar-item flex items-center p-3 text-sm transition"><i class="fa-solid fa-barcode w-6"></i> Hızlı Tara</a>
+                <a href="#" onclick="showSection('reports')" class="sidebar-item flex items-center p-3 text-sm transition"><i class="fa-solid fa-chart-line w-6"></i> Raporlar</a>
+            </nav>
+            <button onclick="location.reload()" class="text-left p-3 text-sm hover:text-white transition"><i class="fa-solid fa-right-from-bracket w-6"></i> Çıkış</button>
+        </aside>
+
+        <main class="flex-1 p-8">
+            <section id="productsSection">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest">Envanter</p>
+                        <h2 class="text-3xl font-bold">Ürünler</h2>
+                        <p class="text-sm text-gray-500">Toplam 0 ürün</p>
+                    </div>
+                    <button onclick="showSection('newProduct')" class="bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold">+ Yeni Ürün</button>
+                </div>
+                <div class="bg-white border rounded-xl overflow-hidden shadow-sm">
+                    <div class="p-4 border-b">
+                        <input type="text" placeholder="İsim veya barkod ile ara..." class="w-full bg-gray-50 border-none rounded-lg p-2 text-sm focus:ring-0">
+                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 border-b text-gray-500 uppercase text-[10px] font-bold">
+                            <tr>
+                                <th class="p-4">Ürün</th>
+                                <th class="p-4">Barkod</th>
+                                <th class="p-4">Fiyat</th>
+                                <th class="p-4">Stok</th>
+                                <th class="p-4">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-gray-400">Yükleniyor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="newProductSection" class="hidden max-w-2xl">
+                <button onclick="showSection('products')" class="text-gray-500 text-sm mb-4 inline-block hover:text-black">← Ürünlere dön</button>
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Yeni Kayıt</p>
+                <h2 class="text-3xl font-bold mb-8">Yeni Ürün Ekle</h2>
+                <div class="bg-white p-8 border rounded-xl space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">ÜRÜN ADI *</label>
+                            <input type="text" id="pName" class="w-full border-gray-200 border p-3 rounded-lg focus:ring-1 focus:ring-black outline-none">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">BARKOD *</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="pBarcode" class="flex-1 border-gray-200 border p-3 rounded-lg focus:ring-1 focus:ring-black outline-none" placeholder="Manuel girin veya tarayın">
+                                <button class="bg-gray-100 p-3 rounded-lg hover:bg-gray-200"><i class="fa-solid fa-expand"></i> Tara</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">FİYAT (₺)</label>
+                            <input type="number" id="pPrice" class="w-full border-gray-200 border p-3 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">STOK ADEDİ</label>
+                            <input type="number" id="pStock" class="w-full border-gray-200 border p-3 rounded-lg">
+                        </div>
+                    </div>
+                    <button onclick="saveProduct()" class="bg-black text-white px-8 py-3 rounded-lg font-bold">Kaydet</button>
+                    <button onclick="showSection('products')" class="text-gray-500 ml-4">İptal</button>
+                </div>
+            </section>
+
+            <section id="reportsSection" class="hidden">
+                <h2 class="text-3xl font-bold mb-6">Satış Raporu</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="bg-white p-6 border rounded-xl">
+                        <p class="text-gray-500 text-xs font-bold">TOPLAM CİRO</p>
+                        <p class="text-2xl font-bold">₺0.00</p>
+                    </div>
+                    <div class="bg-white p-6 border rounded-xl">
+                        <p class="text-gray-500 text-xs font-bold">SATIŞ ADEDİ</p>
+                        <p class="text-2xl font-bold">0</p>
+                    </div>
+                    <div class="bg-white p-6 border rounded-xl">
+                        <p class="text-gray-500 text-xs font-bold">İŞLEM SAYISI</p>
+                        <p class="text-2xl font-bold">0</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDBwiM_edZ6TY5bgnMZB0D-LM_7lretWvo",
+            authDomain: "teknomarket-1.firebaseapp.com",
+            projectId: "teknomarket-1",
+            storageBucket: "teknomarket-1.firebasestorage.app",
+            messagingSenderId: "391354789892",
+            appId: "1:391354789892:web:d82f37e93da39d121b0551",
+            measurementId: "G-D4ZVCL9KNN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Giriş Fonksiyonu
+        window.handleLogin = async () => {
+            const email = document.getElementById('email').value + "@mesut.com"; // Örn: admin@mesut.com
+            const pass = document.getElementById('password').value;
+            try {
+                // Not: Test aşamasındaysan burayı direkt 'mainDashboard'u göster yapabilirsin
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                loadProducts();
+            } catch (err) { alert("Hata: " + err.message); }
+        };
+
+        // Ürün Kaydetme
+        window.saveProduct = async () => {
+            const data = {
+                name: document.getElementById('pName').value,
+                barcode: document.getElementById('pBarcode').value,
+                price: document.getElementById('pPrice').value,
+                stock: document.getElementById('pStock').value,
+                date: new Date()
+            };
+            try {
+                await addDoc(collection(db, "inventory"), data);
+                alert("Ürün başarıyla eklendi!");
+                showSection('products');
+                loadProducts();
+            } catch (e) { alert("Yetki hatası! Firebase Rules'u kontrol et."); }
+        };
+
+        // Ürünleri Listeleme
+        async function loadProducts() {
+            const querySnapshot = await getDocs(collection(db, "inventory"));
+            const tbody = document.getElementById('productTableBody');
+            tbody.innerHTML = "";
+            querySnapshot.forEach((doc) => {
+                const item = doc.data();
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="p-4 font-semibold">${item.name}</td>
+                        <td class="p-4 text-gray-500 font-mono">${item.barcode}</td>
+                        <td class="p-4">₺${item.price}</td>
+                        <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded">${item.stock}</span></td>
+                        <td class="p-4"><button class="text-gray-400 hover:text-black"><i class="fa-solid fa-ellipsis"></i></button></td>
+                    </tr>`;
+            });
+        }
+    </script>
+
+    <script>
+        // Sayfa Değiştirme Mantığı
+        function showSection(sectionId) {
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('newProductSection').classList.add('hidden');
+            document.getElementById('reportsSection').classList.add('hidden');
+            
+            // Linklerin aktiflik durumunu temizle
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active-menu'));
+
+            if(sectionId === 'products') {
+                document.getElementById('productsSection').classList.remove('hidden');
+            } else if(sectionId === 'newProduct') {
+                document.getElementById('newProductSection').classList.remove('hidden');
+            } else if(sectionId === 'reports') {
+                document.getElementById('reportsSection').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+                          </html>
+                          
